@@ -56,7 +56,11 @@ class Predict:
                 f"expected a string, got a {type(text).__name__}", "text"
             )
 
-        resp.media = {"score": predict(text)}
+        try:
+            score = predict(text)
+            resp.media = {"score": score}
+        except EnvironmentError as e:
+            resp.media = {"error": e.message}
 
 
 api.add_route("/predict", Predict())

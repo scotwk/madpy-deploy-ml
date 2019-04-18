@@ -166,11 +166,12 @@ def get_tokenizer() -> tf.keras.preprocessing.text.Tokenizer:
     s3 = s3fs.S3FileSystem()
     if not s3.exists(constants.TOKENIZER_S3_PICKLE):
         if not s3.exists(constants.S3_BUCKET):
-            logging.error(f"s3 bucket {constants.S3_BUCKET} does not exist")
+            msg = f"s3 bucket {constants.S3_BUCKET} does not exist"
         else:
-            logging.error(
-                f"Could not find {constants.TOKENIZER_S3_PICKLE}. Need to upload?"
-            )
+            msg = f"Could not find {constants.TOKENIZER_S3_PICKLE}. Need to upload?"
+        logger.error(msg)
+        raise EnvironmentError(msg)
+
     with s3.open(constants.TOKENIZER_S3_PICKLE, "rb") as f:
         tokenizer = pickle.load(f)
     logger.info(f"got tokenizer, took {time.time() - t0:.2f}s")
